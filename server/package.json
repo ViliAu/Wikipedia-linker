@@ -1,0 +1,11 @@
+{
+  "name": "wikipedia-linker-server",
+  "version": "1.0.0",
+  "description": "Server for the distributed system course project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ViliAu",
+  "license": "ISC"
+}
