@@ -10,28 +10,10 @@ const PORT = process.env.port | 3000;
 /* Start the main thread */
 const startMain = () => {
     console.log("Starting main thread...");
-
-    // Keep track of http requests
-    let numReqs = 0;
-    setInterval(() => {
-        console.log(`numReqs = ${numReqs}`);
-    }, 1000);
-
-    // Count requests
-    function messageHandler(msg) {
-        if (msg.cmd && msg.cmd === 'notifyRequest') {
-            numReqs += 1;
-        }
-    }
-
     // Start workers and listen for messages containing notifyRequest
     const numCPUs = cpus.length;
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
-    }
-
-    for (const id in cluster.workers) {
-        cluster.workers[id].on('message', messageHandler);
     }
 }
 
@@ -41,7 +23,11 @@ const startWorker = () => {
     app.get('/search', (req, res) => {
         const { from, to } = req.query;
         console.log(`${process.pid}: from: ${from}, to: ${to}`);
-        res.json(200)({msg: "ok"});
+        let u = 1;
+        for(let i = 1; i < 1000000000; i++) {
+            u = i * u;
+        }
+        res.json({msg: "ok"});
     });
 
     app.listen(PORT, console.log(`Listening on port ${PORT}`))
