@@ -27,7 +27,7 @@ async function searchPath(startLinks, searchTerm) {
             if (checkLink(newLink, searchTerm)) {
                 console.log("Found it");
                 process.send({ success: true, final: link });
-                return "FOUND IT";
+                return;
             }
             else if (!visited[newLink]) {
                 visited[newLink] = true;

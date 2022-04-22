@@ -1,5 +1,5 @@
 /*  Author: Vili Huusko
-    Last edited: 17.04.2022
+    Last edited: 22.04.2022
     Source(s): https://nodejs.org/api/cluster.html */
 
 const express = require('express');
@@ -78,7 +78,6 @@ const startMain = () => {
 
 const startWorker = () => {
     process.on('message', (msg) => {
-        console.log(msg.linkList)
         wiki.searchPath(msg.linkList, msg.title)
     });
 }

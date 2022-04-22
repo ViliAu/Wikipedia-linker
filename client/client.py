@@ -14,13 +14,14 @@ def start_client_loop():
         if (len(article_from) > 0 and len(article_to) > 0):
             search = f'{ADDRESS}:{PORT}/search?from={article_from}&to={article_to}'
             try:
+                print(f"Trying to find a path from {article_from} to {article_to}...\n")
                 response = requests.get(search)
                 res = response.json()
-                print(res['success'])
                 if(res['success'] == True):
                     print(f"Found a path! Last node is {res['final']} in {res['time']} seconds.")
                 else:
                     print(f"Couldn't find a path between {article_from} and {article_to}.")
+                print("\n")
             except KeyboardInterrupt:
                 break
             except:

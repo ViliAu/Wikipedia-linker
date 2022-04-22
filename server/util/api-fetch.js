@@ -1,3 +1,8 @@
+/*
+    Author: Vili Huusko
+    Last modified: 22.04.2022
+*/
+
 const fetch = require('node-fetch');
 
 const wikiAPI = "http://en.wikipedia.org/w/api.php";
@@ -9,23 +14,24 @@ const headers = {
 const getLinksFromTitle = async (title) => {
     // Construct the URL
     let url = new URL(wikiAPI + params + title);
-
+    let results = []
     // Fetch data from wikipedia api
     let data = await queryWikipedia(url);
-    let pages = data.query.pages;
-    let results = []
-    // Go through the data
-    if (pages) {
-        results = results.concat(parseTitlesFromData(pages));
-        // If we didn't get all the data, continue the search.
-        while (data.continue) {
-            // Edit the url
-            url += "&plcontinue=" + data["continue"]["plcontinue"];
-            // Get additional data
-            data = await queryWikipedia(url);
-            pages = data.query.pages;
-            if (pages) {
-                results = results.concat(parseTitlesFromData(pages));
+    if (data) {
+        let pages = data.query.pages;
+        // Go through the data
+        if (pages) {
+            results = results.concat(parseTitlesFromData(pages));
+            // If we didn't get all the data, continue the search.
+            while (data.continue) {
+                // Edit the url
+                url += "&plcontinue=" + data["continue"]["plcontinue"];
+                // Get additional data
+                data = await queryWikipedia(url);
+                pages = data.query.pages;
+                if (pages) {
+                    results = results.concat(parseTitlesFromData(pages));
+                }
             }
         }
     }
@@ -51,14 +57,20 @@ const parseTitlesFromData = (pages) => {
 
 // Fetch data from the API
 const queryWikipedia = async (url) => {
-    const response = await fetch(url, {
-        method: "GET",
-        headers: headers,
-    });
-    if (response.ok) {
-        return await response.json();
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: headers,
+        });
+        if (response.ok) {
+            return await response.json();
+        }
+        else {
+            return null;
+        }
     }
-    else {
+    catch (e) {
+        console.log("Couldn't fetch wikipedia data from "+url);
         return null;
     }
 }
