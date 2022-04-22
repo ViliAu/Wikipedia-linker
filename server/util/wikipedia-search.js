@@ -6,17 +6,18 @@
 
 const apiSearch = require('./api-fetch.js');
 
-async function searchPath(link, searchTerm) {
+async function searchPath(startLinks, searchTerm) {
     // Links that need to be visited
     let queue = []
-
     // Data structure to keep track of links that are already visited:
     let visited = []
 
-    queue.push(link);
-    visited[link] = true;
+    for (link of startLinks) {
+        queue.push(link);
+        visited[link] = true;
+    }
 
-    while(queue.length > 0) {
+    while (queue.length > 0) {
         const link = queue.shift();
         if (checkLink(link, searchTerm)) {
             console.log("JESH!");
@@ -28,10 +29,11 @@ async function searchPath(link, searchTerm) {
         console.log(`Current node: ${link}`);
         const newLinks = await apiSearch.getLinksFromTitle(link);
         console.log(`${process.pid}: Queue length: ${queue.length}`);
-        for(let newLink of newLinks) {
+        for (let newLink of newLinks) {
             // Check if we found it
             if (checkLink(newLink, searchTerm)) {
                 console.log("JESH!");
+                process.send({ final: newLink });
                 return "FOUND IT";
             }
             else if (!visited[newLink]) {
