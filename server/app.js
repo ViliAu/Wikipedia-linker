@@ -38,7 +38,11 @@ const startMain = () => {
             const endTime = new Date();
             const time = (endTime - startTime) * 0.001;
             console.log(time);
-            return res.json({ success: message.success, final: message.final, time: time })
+            try {
+                res.json({ success: message.success, final: message.final, time: time });
+            }
+            catch(e){}
+            return;
         }
 
         // Do a depth-0 search first

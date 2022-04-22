@@ -9,6 +9,7 @@ def start_client_loop():
         if (len(article_from) == 0):
             break
         article_to = input("Give a wikipedia article where you want to end: ")
+        print()
         if (len(article_to) == 0):
             break
         if (len(article_from) > 0 and len(article_to) > 0):
@@ -21,7 +22,6 @@ def start_client_loop():
                     print(f"Found a path! Last node is {res['final']} in {res['time']} seconds.")
                 else:
                     print(f"Couldn't find a path between {article_from} and {article_to}.")
-                print("\n")
             except KeyboardInterrupt:
                 break
             except:
