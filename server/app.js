@@ -24,7 +24,10 @@ const startWorker = () => {
     app.get('/search', async (req, res) => {
         const { from, to } = req.query;
         console.log(`${process.pid}: from: ${from}, to: ${to}`);
+        let start = new Date();
         const result = await wiki.searchPath(from, to);
+        let finish = new Date();
+        console.log(`Time: ${(finish-start)*0.001}`)
         res.json({msg: "ok"});
     });
 

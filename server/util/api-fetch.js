@@ -36,12 +36,14 @@ const getLinksFromTitle = async (title) => {
 // Parse the titles from the data
 const parseTitlesFromData = (pages) => {
     let results = []
-    const pageLinks = Object.values(pages)[0].links
-    for (let key in pageLinks) {
-        const link = pageLinks[key]
-        // Filter out bad links
-        if (link.ns == 0) {
-            results.push(link.title);
+    const pageLinks = Object.values(pages)[0].links;
+    if (pageLinks instanceof Array) {
+        for (let link of pageLinks) {
+            //const link = pageLinks[key];
+            // Filter out bad links
+            if (link.ns == 0) {
+                results.push(link.title);
+            }
         }
     }
     return results;

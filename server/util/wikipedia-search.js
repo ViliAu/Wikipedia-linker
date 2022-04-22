@@ -6,12 +6,6 @@
 
 const apiSearch = require('./api-fetch.js');
 
-// Wrapper function to get the first links
-async function startSearch(from, to) {
-    const links = await apiSearch.getLinksFromTitle(from);
-    return searchPath(links, to);
-}
-
 async function searchPath(link, searchTerm) {
     // Links that need to be visited
     let queue = []
@@ -19,20 +13,24 @@ async function searchPath(link, searchTerm) {
     // Data structure to keep track of links that are already visited:
     let visited = []
 
-    // Add all the links to queue
-    //for(link in links) {
-        queue.push(link);
-        visited[link] = true;
-    //}
+    queue.push(link);
+    visited[link] = true;
 
     while(queue.length > 0) {
         const link = queue.shift();
+        if (checkLink(link, searchTerm)) {
+            console.log("JESH!");
+            return "FOUND IT";
+        }
+        else {
+            visited[link] = true;
+        }
         console.log(`Current node: ${link}`);
         const newLinks = await apiSearch.getLinksFromTitle(link);
-        console.log(`Queue length: ${queue.length}`);
-        for(let newLink in newLinks) {
+        console.log(`${process.pid}: Queue length: ${queue.length}`);
+        for(let newLink of newLinks) {
             // Check if we found it
-            if (newLink.toLowerCase() === searchTerm.toLowerCase()) {
+            if (checkLink(newLink, searchTerm)) {
                 console.log("JESH!");
                 return "FOUND IT";
             }
@@ -42,6 +40,10 @@ async function searchPath(link, searchTerm) {
             }
         }
     }
+}
+
+const checkLink = (current, target) => {
+    return (current.toLowerCase() === target.toLowerCase());
 }
 
 exports.searchPath = searchPath;
