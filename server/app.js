@@ -5,6 +5,7 @@
 const express = require('express');
 const cluster = require('cluster');
 const cpus = require('os').cpus();
+const wiki = require('./util/wikipedia-search.js');
 const PORT = process.env.port | 3000;
 
 /* Start the main thread */
@@ -20,13 +21,10 @@ const startMain = () => {
 const startWorker = () => {
     const app = express();
 
-    app.get('/search', (req, res) => {
+    app.get('/search', async (req, res) => {
         const { from, to } = req.query;
         console.log(`${process.pid}: from: ${from}, to: ${to}`);
-        let u = 1;
-        for(let i = 1; i < 1000000000; i++) {
-            u = i * u;
-        }
+        const result = await wiki.searchPath(from, to);
         res.json({msg: "ok"});
     });
 
