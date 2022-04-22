@@ -23,16 +23,21 @@ const getLinksFromTitle = async (title) => {
         if (pages) {
             results = results.concat(parseTitlesFromData(pages));
             // If we didn't get all the data, continue the search.
-            while (data.continue) {
-                // Edit the url
-                url += "&plcontinue=" + data["continue"]["plcontinue"];
-                // Get additional data
-                data = await queryWikipedia(url);
-                pages = data.query.pages;
-                if (pages) {
-                    results = results.concat(parseTitlesFromData(pages));
+                while (data.continue) {
+                    // Edit the url
+                    url += "&plcontinue=" + data["continue"]["plcontinue"];
+                    // Get additional data
+                    data = await queryWikipedia(url);
+                    if (data) {
+                        pages = data.query.pages;
+                        if (pages) {
+                            results = results.concat(parseTitlesFromData(pages));
+                        }
+                    }
+                    else {
+                        break;
+                    }
                 }
-            }
         }
     }
     //console.log(`RESULTS LENGTH: ${results.length}`);
@@ -70,7 +75,7 @@ const queryWikipedia = async (url) => {
         }
     }
     catch (e) {
-        console.log("Couldn't fetch wikipedia data from "+url);
+        console.log("Couldn't fetch wikipedia data from " + url);
         return null;
     }
 }

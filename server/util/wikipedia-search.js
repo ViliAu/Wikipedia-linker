@@ -12,9 +12,15 @@ async function searchPath(startLinks, searchTerm) {
     // Data structure to keep track of links that are already visited:
     let visited = []
 
-    for (link of startLinks) {
-        queue.push(link);
-        visited[link] = true;
+    if (startLinks instanceof Array) {
+        for (link of startLinks) {
+            queue.push(link);
+            visited[link] = true;
+        }
+    }
+    else {
+        queue.push(startLinks);
+        visited[startLinks] = true;
     }
 
     while (queue.length > 0) {

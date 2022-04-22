@@ -9,7 +9,7 @@ const wiki = require('./util/wikipedia-search.js');
 const apiFetch = require('./util/api-fetch.js');
 const PORT = process.env.port | 3000;
 
-const timeout = 600
+const timeout = 3600
 
 /* Start the main thread */
 const startMain = () => {
@@ -41,15 +41,18 @@ const startMain = () => {
             try {
                 res.json({ success: message.success, final: message.final, time: time });
             }
-            catch(e){}
+            catch (e) { }
             return;
         }
-
+        
+        console.log(startLinks)
         // Do a depth-0 search first
-        for (link of startLinks) {
-            if (link.toLowerCase() === to.toLowerCase()) {
-                finishSearch({ success: true, final: link });
-                return;
+        if (startLinks instanceof Array) {
+            for (link of startLinks) {
+                if (link.toLowerCase() === to.toLowerCase()) {
+                    finishSearch({ success: true, final: link });
+                    return;
+                }
             }
         }
 
