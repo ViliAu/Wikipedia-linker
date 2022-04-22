@@ -29,7 +29,7 @@ const getLinksFromTitle = async (title) => {
             }
         }
     }
-    console.log(`RESULTS LENGTH: ${results.length}`);
+    //console.log(`RESULTS LENGTH: ${results.length}`);
     return results;
 }
 

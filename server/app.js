@@ -9,6 +9,8 @@ const wiki = require('./util/wikipedia-search.js');
 const apiFetch = require('./util/api-fetch.js');
 const PORT = process.env.port | 3000;
 
+const timeout = 600
+
 /* Start the main thread */
 const startMain = () => {
     console.log("Starting main thread...");
@@ -16,6 +18,7 @@ const startMain = () => {
     const app = express()
 
     app.get('/search', async (req, res) => {
+        // Start time for timer
         const startTime = new Date();
 
         const { from, to } = req.query;
@@ -23,17 +26,26 @@ const startMain = () => {
 
         // Get first links to share between workers
         startLinks = await apiFetch.getLinksFromTitle(from);
-        console.log(startLinks);
+
         // Event when a worker finds the word
         const finishSearch = (message) => {
-            const endTime = new Date();
-            const time = (endTime-startTime)*0.001;
-            console.log(time);
-            res.send({ msg: "Moro", time: time})
-
             // Kill workers
             for (let id in cluster.workers) {
                 cluster.workers[id].kill();
+            }
+
+            clearInterval();
+            const endTime = new Date();
+            const time = (endTime - startTime) * 0.001;
+            console.log(time);
+            return res.json({ success: message.success, final: message.final, time: time })
+        }
+
+        // Do a depth-0 search first
+        for (link of startLinks) {
+            if (link.toLowerCase() === to.toLowerCase()) {
+                finishSearch({ success: true, final: link });
+                return;
             }
         }
 
@@ -56,6 +68,9 @@ const startMain = () => {
             });
             i++;
         }
+
+        // Timeout failsafe
+        const failsafe = setInterval(finishSearch, timeout * 1000, { success: false, final: 'none' });
     });
 
     app.listen(PORT, console.log(`Listening on port ${PORT}`))

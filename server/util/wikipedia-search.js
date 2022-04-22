@@ -19,21 +19,14 @@ async function searchPath(startLinks, searchTerm) {
 
     while (queue.length > 0) {
         const link = queue.shift();
-        if (checkLink(link, searchTerm)) {
-            console.log("JESH!");
-            return "FOUND IT";
-        }
-        else {
-            visited[link] = true;
-        }
-        console.log(`Current node: ${link}`);
+        //console.log(`Current node: ${link}`);
         const newLinks = await apiSearch.getLinksFromTitle(link);
-        console.log(`${process.pid}: Queue length: ${queue.length}`);
+        //console.log(`${process.pid}: Queue length: ${queue.length}`);
         for (let newLink of newLinks) {
             // Check if we found it
             if (checkLink(newLink, searchTerm)) {
-                console.log("JESH!");
-                process.send({ final: newLink });
+                console.log("Found it");
+                process.send({ success: true, final: link });
                 return "FOUND IT";
             }
             else if (!visited[newLink]) {
